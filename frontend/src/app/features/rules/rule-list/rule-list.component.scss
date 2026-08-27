@@ -1,0 +1,96 @@
+.rule-list-container {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .filter-card {
+    margin-bottom: 24px;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .search-field {
+    flex: 1;
+  }
+
+  .filter-field {
+    width: 150px;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 60px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px;
+    color: #999;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      color: #666;
+    }
+
+    p {
+      margin: 0 0 24px;
+    }
+  }
+
+  .rules-table-container {
+    overflow-x: auto;
+  }
+
+  .rules-table {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .channel-icon {
+    vertical-align: middle;
+    margin-right: 4px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rule-list-container {
+    .page-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .filter-row {
+      flex-direction: column;
+    }
+
+    .filter-field {
+      width: 100%;
+    }
+  }
+}

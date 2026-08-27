@@ -1,0 +1,41 @@
+<div class="condition-builder">
+  <div class="conditions-header">
+    <label class="section-label">Conditions</label>
+    <span class="condition-hint">All conditions must match (AND logic)</span>
+  </div>
+
+  <div *ngIf="conditions.length === 0" class="no-conditions">
+    <mat-icon>info</mat-icon>
+    <span>No conditions. The rule will trigger on every matching event.</span>
+  </div>
+
+  <ng-container *ngFor="let condition of getConditionGroups(); let i = index">
+    <div [formGroup]="condition" class="condition-row">
+      <mat-form-field appearance="outline" class="field-input">
+        <mat-label>Field</mat-label>
+        <input matInput formControlName="field" placeholder="e.g. order.total">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="operator-input">
+        <mat-label>Operator</mat-label>
+        <mat-select formControlName="operator">
+          <mat-option *ngFor="let op of operators" [value]="op">{{ op }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="value-input">
+        <mat-label>Value</mat-label>
+        <input matInput formControlName="value" placeholder="e.g. 10000">
+      </mat-form-field>
+
+      <button mat-icon-button color="warn" (click)="removeCondition(i)" [disabled]="disabled" matTooltip="Remove condition">
+        <mat-icon>remove_circle</mat-icon>
+      </button>
+    </div>
+  </ng-container>
+
+  <button mat-stroked-button color="primary" (click)="addCondition()" [disabled]="disabled" class="add-button">
+    <mat-icon>add</mat-icon>
+    Add Condition
+  </button>
+</div>

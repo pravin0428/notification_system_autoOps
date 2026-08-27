@@ -1,0 +1,108 @@
+<div class="rule-list-container">
+  <div class="page-header">
+    <h1 class="page-title">Rules</h1>
+    <button mat-raised-button color="primary" (click)="createRule()">
+      <mat-icon>add</mat-icon>
+      Create Rule
+    </button>
+  </div>
+
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search rules</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search by name or event">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="filterEnabled" (selectionChange)="applyFilters()">
+            <mat-option value="all">All</mat-option>
+            <mat-option value="enabled">Enabled</mat-option>
+            <mat-option value="disabled">Disabled</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && filteredRules.length === 0" class="empty-state">
+    <mat-icon>rule</mat-icon>
+    <h3>No rules found</h3>
+    <p>Create your first notification rule to get started.</p>
+    <button mat-raised-button color="primary" (click)="createRule()">Create Rule</button>
+  </div>
+
+  <div *ngIf="!loading && filteredRules.length > 0" class="rules-table-container">
+    <table mat-table [dataSource]="displayedRules" class="rules-table">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Rule Name</th>
+        <td mat-cell *matCellDef="let rule">{{ rule.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="event">
+        <th mat-header-cell *matHeaderCellDef>Event</th>
+        <td mat-cell *matCellDef="let rule">
+          <mat-chip-list>
+            <mat-chip>{{ rule.event }}</mat-chip>
+          </mat-chip-list>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="channel">
+        <th mat-header-cell *matHeaderCellDef>Channel</th>
+        <td mat-cell *matCellDef="let rule">
+          <mat-icon class="channel-icon">{{ getChannelIcon(rule.channel) }}</mat-icon>
+          {{ rule.channel }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="conditions">
+        <th mat-header-cell *matHeaderCellDef>Conditions</th>
+        <td mat-cell *matCellDef="let rule">
+          {{ rule.conditions.length }} condition(s)
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let rule">
+          <mat-slide-toggle
+            [checked]="rule.enabled"
+            (change)="toggleEnabled(rule)"
+            color="primary">
+          </mat-slide-toggle>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let rule">
+          <button mat-icon-button (click)="editRule(rule)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteRule(rule)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['name', 'event', 'channel', 'conditions', 'status', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['name', 'event', 'channel', 'conditions', 'status', 'actions'];"></tr>
+    </table>
+
+    <mat-paginator
+      [length]="totalRules"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 25]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

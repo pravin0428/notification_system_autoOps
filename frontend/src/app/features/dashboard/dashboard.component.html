@@ -1,0 +1,77 @@
+<div class="dashboard-container">
+  <h1 class="page-title">Dashboard</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="stats-grid" *ngIf="!loading">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon total">analytics</mat-icon>
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Total Notifications</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon sent">check_circle</mat-icon>
+        <div class="stat-value">{{ stats.sent }}</div>
+        <div class="stat-label">Sent</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon failed">error</mat-icon>
+        <div class="stat-value">{{ stats.failed }}</div>
+        <div class="stat-label">Failed</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon pending">schedule</mat-icon>
+        <div class="stat-value">{{ stats.pending }}</div>
+        <div class="stat-label">Pending</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon rules">rule</mat-icon>
+        <div class="stat-value">{{ stats.activeRules }}</div>
+        <div class="stat-label">Active Rules</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="recent-card">
+    <mat-card-header>
+      <mat-card-title>Recent Notifications</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="recentNotifications.length === 0" class="empty-state">
+        <mat-icon>notifications_off</mat-icon>
+        <p>No notifications yet</p>
+      </div>
+
+      <div *ngFor="let notification of recentNotifications" class="notification-item">
+        <div class="notification-info">
+          <span class="notification-rule">{{ getRuleName(notification) }}</span>
+          <span class="notification-recipient">{{ notification.recipient }}</span>
+          <span class="notification-channel">{{ notification.channel }}</span>
+        </div>
+        <div class="notification-meta">
+          <mat-chip-list>
+            <mat-chip [color]="notification.status === 'SENT' ? 'primary' : notification.status === 'FAILED' ? 'warn' : ''" selected>
+              {{ notification.status }}
+            </mat-chip>
+          </mat-chip-list>
+          <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

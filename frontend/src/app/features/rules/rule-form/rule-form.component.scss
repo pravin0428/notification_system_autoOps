@@ -1,0 +1,58 @@
+.rule-form-container {
+  .page-header {
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 60px;
+  }
+
+  .form-row {
+    margin-bottom: 8px;
+
+    &.two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .conditions-section {
+    padding: 16px 0;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+  }
+
+  .button-spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rule-form-container {
+    .form-row.two-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+}

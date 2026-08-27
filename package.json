@@ -1,0 +1,23 @@
+{
+  "name": "notification-system-autoops",
+  "version": "1.0.0",
+  "description": "Configurable Notification System - Backend and Frontend",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && ng serve",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && ng build",
+    "test": "cd backend && npm test",
+    "test:backend": "cd backend && npm test",
+    "seed": "cd backend && npm run seed",
+    "lint": "cd backend && npm run lint",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

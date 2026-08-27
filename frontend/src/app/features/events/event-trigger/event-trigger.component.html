@@ -1,0 +1,133 @@
+<div class="event-trigger-container">
+  <div class="page-header">
+    <h1 class="page-title">Trigger Event</h1>
+  </div>
+
+  <div class="content-grid">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>Event Configuration</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Event Type</mat-label>
+              <mat-select formControlName="type">
+                <mat-option *ngFor="let event of events" [value]="event">{{ event }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="eventForm.get('type')?.hasError('required')">Event type is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Event ID (Optional)</mat-label>
+              <input matInput formControlName="eventId" placeholder="e.g. evt-123 (for idempotency testing)">
+              <mat-hint>Use the same ID to test duplicate event handling</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div formGroupName="order" class="form-section">
+            <h3>Order Data</h3>
+            <div class="form-row two-cols">
+              <mat-form-field appearance="outline">
+                <mat-label>Order ID</mat-label>
+                <input matInput formControlName="id" placeholder="e.g. ORD-1001">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Order Total</mat-label>
+                <input matInput type="number" formControlName="total" placeholder="e.g. 15000">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row two-cols">
+              <mat-form-field appearance="outline">
+                <mat-label>Order Status</mat-label>
+                <input matInput formControlName="status" placeholder="e.g. CONFIRMED">
+              </mat-form-field>
+
+              <div formGroupName="customer" class="form-row two-cols">
+                <mat-form-field appearance="outline">
+                  <mat-label>Customer Name</mat-label>
+                  <input matInput formControlName="name" placeholder="e.g. John Doe">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Customer Email</mat-label>
+                  <input matInput formControlName="email" placeholder="e.g. john@example.com">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div formGroupName="payment" class="form-section">
+            <h3>Payment Data (for PAYMENT_FAILED)</h3>
+            <div class="form-row two-cols">
+              <mat-form-field appearance="outline">
+                <mat-label>Payment Reason</mat-label>
+                <input matInput formControlName="reason" placeholder="e.g. Insufficient funds">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Payment Amount</mat-label>
+                <input matInput type="number" formControlName="amount" placeholder="e.g. 5000">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="resetForm()" [disabled]="sending">Reset</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="eventForm.get('type')?.invalid || sending">
+              <mat-spinner *ngIf="sending" diameter="20" class="button-spinner"></mat-spinner>
+              Trigger Event
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card *ngIf="result" class="result-card" [class.success]="result.failed === 0" [class.partial]="result.failed > 0 && result.successful > 0" [class.failed]="result.failed > 0 && result.successful === 0">
+      <mat-card-header>
+        <mat-card-title>Event Processed Successfully</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="result-summary">
+          <div class="result-stat">
+            <span class="stat-label">Event ID</span>
+            <span class="stat-value">{{ result.eventId }}</span>
+          </div>
+          <div class="result-stat">
+            <span class="stat-label">Rules Matched</span>
+            <span class="stat-value highlight">{{ result.rulesMatched }}</span>
+          </div>
+          <div class="result-stat">
+            <span class="stat-label">Notifications Generated</span>
+            <span class="stat-value">{{ result.notificationsGenerated }}</span>
+          </div>
+          <div class="result-stat">
+            <span class="stat-label">Successful</span>
+            <span class="stat-value success">{{ result.successful }}</span>
+          </div>
+          <div class="result-stat">
+            <span class="stat-label">Failed</span>
+            <span class="stat-value" [class.error]="result.failed > 0">{{ result.failed }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="result.results.length > 0" class="result-details">
+          <h4>Details</h4>
+          <div *ngFor="let detail of result.results" class="detail-row">
+            <span class="detail-rule">{{ detail.ruleName }}</span>
+            <span class="detail-recipient">{{ detail.recipient }}</span>
+            <mat-chip-list>
+              <mat-chip [color]="detail.status === 'SENT' ? 'primary' : 'warn'" selected>{{ detail.status }}</mat-chip>
+            </mat-chip-list>
+            <span *ngIf="detail.error" class="detail-error">{{ detail.error }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

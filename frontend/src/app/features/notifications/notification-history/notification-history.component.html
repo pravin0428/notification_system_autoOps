@@ -1,0 +1,95 @@
+<div class="notification-history-container">
+  <div class="page-header">
+    <h1 class="page-title">Notification History</h1>
+  </div>
+
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="filterStatus" (selectionChange)="onFilterChange()">
+            <mat-option value="all">All</mat-option>
+            <mat-option value="SENT">Sent</mat-option>
+            <mat-option value="FAILED">Failed</mat-option>
+            <mat-option value="PENDING">Pending</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Channel</mat-label>
+          <mat-select [(ngModel)]="filterChannel" (selectionChange)="onFilterChange()">
+            <mat-option value="all">All</mat-option>
+            <mat-option value="EMAIL">Email</mat-option>
+            <mat-option value="IN_APP">In-App</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state">
+    <mat-icon>notifications_off</mat-icon>
+    <h3>No notifications found</h3>
+    <p>Trigger an event to generate notifications.</p>
+  </div>
+
+  <mat-card *ngIf="!loading && notifications.length > 0">
+    <mat-card-content>
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="notifications" class="notifications-table">
+          <ng-container matColumnDef="ruleName">
+            <th mat-header-cell *matHeaderCellDef>Rule</th>
+            <td mat-cell *matCellDef="let notification">{{ getRuleName(notification) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="recipient">
+            <th mat-header-cell *matHeaderCellDef>Recipient</th>
+            <td mat-cell *matCellDef="let notification">{{ notification.recipient }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="channel">
+            <th mat-header-cell *matHeaderCellDef>Channel</th>
+            <td mat-cell *matCellDef="let notification">
+              <mat-icon class="channel-icon">{{ notification.channel === 'EMAIL' ? 'email' : 'notifications' }}</mat-icon>
+              {{ notification.channel }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let notification">
+              <mat-chip-list>
+                <mat-chip [color]="getStatusColor(notification.status)" [selected]="notification.status === 'SENT' || notification.status === 'FAILED'">
+                  {{ notification.status }}
+                </mat-chip>
+              </mat-chip-list>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+            <td mat-cell *matCellDef="let notification">
+              {{ notification.createdAt | date:'medium' }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [length]="totalNotifications"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,137 @@
+.dashboard-container {
+  .page-title {
+    margin: 0 0 24px;
+    font-size: 28px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 60px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 20px;
+
+    mat-card-content {
+      padding: 0;
+    }
+
+    .stat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 8px;
+
+      &.total { color: #3f51b5; }
+      &.sent { color: #4caf50; }
+      &.failed { color: #f44336; }
+      &.pending { color: #ff9800; }
+      &.rules { color: #9c27b0; }
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+  }
+
+  .recent-card {
+    mat-card-header {
+      margin-bottom: 16px;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 8px;
+    }
+  }
+
+  .notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .notification-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .notification-rule {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .notification-recipient {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .notification-channel {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .notification-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .notification-time {
+    font-size: 12px;
+    color: #999;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .notification-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .notification-meta {
+      align-items: flex-start;
+    }
+  }
+}
