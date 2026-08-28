@@ -64,11 +64,11 @@
           <span class="notification-channel">{{ notification.channel }}</span>
         </div>
         <div class="notification-meta">
-          <mat-chip-list>
-            <mat-chip [color]="notification.status === 'SENT' ? 'primary' : notification.status === 'FAILED' ? 'warn' : ''" selected>
+          <mat-chip-set>
+            <mat-chip [color]="notification.status === 'SENT' ? 'primary' : notification.status === 'FAILED' ? 'warn' : ''">
               {{ notification.status }}
             </mat-chip>
-          </mat-chip-list>
+          </mat-chip-set>
           <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { RuleService } from '../../core/services/rule.service';
 import { DashboardStats, Notification, Rule } from '../../core/models/notification.models';
 
 @Component({
+  standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],

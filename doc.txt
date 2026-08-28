@@ -1,0 +1,154 @@
+=================================================================
+Configurable Notification System - Architecture & Key Decisions
+Submission documentation
+=================================================================
+
+1. OVERVIEW
+-----------------------------------------------------------------
+A configurable notification system with a separation between backend
+(REST API, rule engine, notification delivery) and frontend (Angular
+Material SPA for rule management, event triggering, and notification
+history).
+
+   Angular 21 SPA  (localhost:4200)
+        |
+        |  REST  (proxy-less direct API calls)
+        v
+   Express.js API  (localhost:3000)
+        |
+        v
+   Rule Engine -> Condition Evaluator + Template Service
+        |
+        v
+   Channel Factory (Strategy) -> EmailChannel / InAppChannel
+        |
+        v
+   MongoDB (Mongoose ODM)
+
+2. TECH STACK (as submitted)
+-----------------------------------------------------------------
+ Frontend : Angular 21.2 (Material 21.2, CDK 21.2, TypeScript 5.9,
+            RxJS 7, Zone.js 0.15, standalone-capable CLI)
+ Backend  : Node.js 20, Express 4.18, TypeScript 5.3, Mongoose 7.6,
+            express-validator, helmet, morgan, cors, dotenv
+ Tests    : Jest 29 + Supertest (backend), Jasmine/Karma (frontend)
+ Tooling  : ESLint, Prettier, concurrently (root orchestrator)
+
+3. KEY ARCHITECTURE DECISIONS
+-----------------------------------------------------------------
+A. Separate pure "rule engine"
+   - ConditionEvaluator and TemplateService are pure functions with no
+     side effects. This makes them unit-testable without any
+     infrastructure and easy to replace or re-use in a worker process
+     later. Nested field access is supported (e.g. order.total) and
+     6 operators: EQUALS, NOT_EQUALS, GREATER_THAN, LESS_THAN,
+     GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL.
+
+B. Strategy pattern for notification channels
+   - ChannelFactory maps NotificationChannelType -> channel instance.
+     Adding a new channel (SMS, Slack, Webhook, push) requires only a
+     new class implementing the NotificationChannel interface and one
+     registration in the factory.
+   - Email is mocked at the provider boundary; In-App persists
+     notifications to MongoDB.
+
+C. Mongo document model
+   - Rules carry a flexible `conditions[]` array (field/operator/value),
+     which maps naturally to Mongo documents and to the variable-shape
+     event payloads processed by the rules.
+
+D. Event idempotency
+   - Each event may carry an `eventId`. A unique compound index on
+     (eventId, ruleId, recipient, channel) prevents duplicate
+     notifications when the same event is replayed. Duplicate events are
+     detected and skipped without error.
+
+E. Modular backend
+   - Each domain (rules, events, notifications) is isolated in
+     modules/* with its own model, service, routes and types. Controllers
+     are thin; business logic lives in services.
+
+F. Async error handling
+   - Express 4 does not forward rejected promises from async route
+     handlers to the error middleware automatically. A small
+     asyncHandler() util wraps async handlers so that rejections are
+     passed to `next()` and handled by the centralized error handler.
+     This avoids unhandled rejections and keeps responses consistent.
+
+G. Frontend change detection note
+   - Components use Angular's default (non-OnPush) change-detection
+     strategy. To guarantee the view re-renders the instant an async
+     HTTP payload arrives, rule-form.loadRule() explicitly calls
+     ChangeDetectorRef.detectChanges() after assigning loading/data on
+     the edit path. This was introduced after confirming (via live
+     browser instrumentation) that the component instance held the data
+     while the DOM remained stale. Frontend is Angular 21 with standard
+     zone.js polyfills (see frontend/angular.json polyfills: ["zone.js"]).
+
+4. ERROR HANDLING CONTRACT
+-----------------------------------------------------------------
+All API errors use a consistent envelope:
+
+  { "success": false, "error": { "code": "...", "message": "...", "details": [...] } }
+
+Custom error types: ValidationError (400), NotFoundError (404),
+ConflictError (409), UnsupportedChannelError (400). A single failure in
+one rule evaluation does not stop other rules (each rule is evaluated
+independently).
+
+5. DATA MODEL / INDEXES
+-----------------------------------------------------------------
+Rule       : name, event, conditions[], recipients[], channel, template, enabled
+Event      : type, data, eventId (unique)
+Notification: eventId, ruleId, recipient, channel, status, message, createdAt
+
+Indexes:
+ - (eventId, ruleId, recipient, channel) unique -> notification idempotency
+ - Event.eventId unique -> event deduplication
+ - Rule.event + Rule.enabled -> fast rule lookup
+ - Notification.status, Notification.channel, Notification.createdAt ->
+   filtering + history pagination
+
+6. PRODUCTION CONSIDERATIONS
+-----------------------------------------------------------------
+Current implementation is synchronous and keeps external providers mocked,
+which is appropriate for the assignment scope. For real production:
+
+ - Async processing: replace in-process synchronous channel delivery with
+   a job queue (Redis/BullMQ) plus worker processes.
+ - Real providers: SendGrid (SMTP/API), Firebase (push), Twilio (SMS).
+   ChannelFactory makes this a drop-in change.
+ - Retry & backoff: exponential backoff with a max-retry policy.
+ - Dead-letter queue for permanently failing notifications.
+ - Authentication & authorization: JWT + role-based access (no auth
+   currently; every rule/event/notification endpoint is open).
+ - Rate limiting on public endpoints.
+ - Observability: structured logging, request tracing, Prometheus/Grafana
+   or APM for metrics.
+ - Horizontal scaling: keep workers stateless behind a load balancer;
+   the unique idempotency index keeps replay-safe behavior across replicas.
+ - Security hardening already present: helmet, CORS, and dotenv-based
+   env configuration. Set NODE_ENV=production and disable CORS wide-open
+   origins in production.
+ - Backend tests require a running MongoDB (mongoose connects to
+   mongodb://localhost:27017/notification-system-test via src/__tests__/setup.ts).
+   Run: npm test (root) or cd backend && npm test.
+
+7. PROJECT LAYOUT (summary)
+-----------------------------------------------------------------
+ backend/src
+  common/        errors, types, utils (incl. async-handler)
+  config/        db + environment
+  modules/       rules, events, notifications (model/service/routes)
+  notification/  channels (Email, InApp, Factory), rule-engine, template
+  __tests__/     jest suites (unit + integration)
+  app.ts, server.ts
+ frontend/src
+  core/          models, services (e.g. RuleService)
+  shared/        Material module
+  features/      dashboard, rules (list/form/condition-builder),
+                 events (trigger), notifications (history)
+  app.module.ts, app-routing.module.ts
+ Root: package.json (orchestrator scripts), README.md, doc.txt
+
+=================================================================

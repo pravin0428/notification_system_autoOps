@@ -121,9 +121,9 @@
           <div *ngFor="let detail of result.results" class="detail-row">
             <span class="detail-rule">{{ detail.ruleName }}</span>
             <span class="detail-recipient">{{ detail.recipient }}</span>
-            <mat-chip-list>
-              <mat-chip [color]="detail.status === 'SENT' ? 'primary' : 'warn'" selected>{{ detail.status }}</mat-chip>
-            </mat-chip-list>
+            <mat-chip-set>
+              <mat-chip [color]="detail.status === 'SENT' ? 'primary' : 'warn'">{{ detail.status }}</mat-chip>
+            </mat-chip-set>
             <span *ngIf="detail.error" class="detail-error">{{ detail.error }}</span>
           </div>
         </div>

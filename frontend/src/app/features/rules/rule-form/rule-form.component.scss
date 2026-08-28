@@ -17,12 +17,16 @@
   }
 
   .form-row {
-    margin-bottom: 8px;
+    margin-bottom: 20px;
 
     &.two-cols {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
+    }
+
+    &:last-of-type:not(.form-actions) {
+      margin-bottom: 0;
     }
   }
 
@@ -31,12 +35,16 @@
   }
 
   .conditions-section {
-    padding: 16px 0;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background: #fafafa;
   }
 
   .form-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 12px;
     margin-top: 24px;
     padding-top: 16px;
@@ -53,6 +61,14 @@
   .rule-form-container {
     .form-row.two-cols {
       grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-wrap: wrap;
+
+      button {
+        flex: 1 1 auto;
+      }
     }
   }
 }

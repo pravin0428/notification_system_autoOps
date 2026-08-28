@@ -5,6 +5,7 @@ import { RuleService } from '../../../core/services/rule.service';
 import { Rule } from '../../../core/models/notification.models';
 
 @Component({
+  standalone: false,
   selector: 'app-rule-list',
   templateUrl: './rule-list.component.html',
   styleUrls: ['./rule-list.component.scss'],

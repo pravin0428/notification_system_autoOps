@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { RuleService } from '../../../core/services/rule.service';
 import { EventType, NotificationChannelType, Rule } from '../../../core/models/notification.models';
 
 @Component({
+  standalone: false,
   selector: 'app-rule-form',
   templateUrl: './rule-form.component.html',
   styleUrls: ['./rule-form.component.scss'],
@@ -18,12 +20,14 @@ export class RuleFormComponent implements OnInit {
   events = Object.values(EventType);
   channels = Object.values(NotificationChannelType);
   templatePlaceholder = 'e.g. Order {{order.id}} has value {{order.total}}';
+  recipientSeparatorKeyCodes = [13];
 
   constructor(
     private fb: FormBuilder,
     private ruleService: RuleService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -62,9 +66,11 @@ export class RuleFormComponent implements OnInit {
           enabled: rule.enabled,
         });
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
+        this.cdr.detectChanges();
         this.router.navigate(['/rules']);
       },
     });
@@ -115,16 +121,15 @@ export class RuleFormComponent implements OnInit {
     return '';
   }
 
-  onRecipientsInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = target.value.trim();
+  addRecipient(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
     if (value) {
       const currentRecipients = this.ruleForm.get('recipients')?.value || [];
       if (!currentRecipients.includes(value)) {
         this.ruleForm.patchValue({ recipients: [...currentRecipients, value] });
-        target.value = '';
       }
     }
+    event.chipInput?.clear();
   }
 
   removeRecipient(recipient: string): void {

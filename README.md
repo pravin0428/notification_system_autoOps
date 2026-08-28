@@ -1,6 +1,6 @@
 # Configurable Notification System
 
-A production-quality, configurable notification system built with Angular 14, Node.js/Express, TypeScript, and MongoDB.
+A production-quality, configurable notification system built with Angular 21, Node.js/Express, TypeScript, and MongoDB.
 
 Users can define notification rules that specify when they want to receive notifications, which events trigger them, what conditions must be met, who receives them, which channel to use, and what message template to send.
 
@@ -19,7 +19,7 @@ Users can define notification rules that specify when they want to receive notif
 ## Architecture
 
 ```
-Angular 14 Frontend
+Angular 21 Frontend
     |
     v
 REST API (Express.js)
@@ -56,7 +56,7 @@ MongoDB (Mongoose ODM)
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Angular 14, TypeScript, Angular Material, RxJS |
+| Frontend | Angular 21, TypeScript, Angular Material, RxJS, Zone.js |
 | Backend | Node.js, Express.js, TypeScript |
 | Database | MongoDB 6.x, Mongoose 7.x |
 | Testing | Jest, Supertest |

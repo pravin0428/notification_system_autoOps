@@ -1,12 +1,12 @@
 <div class="condition-builder">
   <div class="conditions-header">
-    <label class="section-label">Conditions</label>
-    <span class="condition-hint">All conditions must match (AND logic)</span>
+    <label class="section-label">Conditions <span class="optional-tag">Optional</span></label>
+    <span class="condition-hint">All conditions must match (AND logic). If you add none, the rule triggers on every matching event.</span>
   </div>
 
   <div *ngIf="conditions.length === 0" class="no-conditions">
     <mat-icon>info</mat-icon>
-    <span>No conditions. The rule will trigger on every matching event.</span>
+    <span>No conditions set — this rule will trigger on every matching event.</span>
   </div>
 
   <ng-container *ngFor="let condition of getConditionGroups(); let i = index">

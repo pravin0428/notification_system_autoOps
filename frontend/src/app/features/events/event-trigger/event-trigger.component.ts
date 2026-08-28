@@ -4,6 +4,7 @@ import { EventService } from '../../../core/services/event.service';
 import { EventType, EventTriggerResult } from '../../../core/models/notification.models';
 
 @Component({
+  standalone: false,
   selector: 'app-event-trigger',
   templateUrl: './event-trigger.component.html',
   styleUrls: ['./event-trigger.component.scss'],

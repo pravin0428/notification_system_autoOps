@@ -4,6 +4,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { Notification, NotificationStatus, NotificationChannelType } from '../../../core/models/notification.models';
 
 @Component({
+  standalone: false,
   selector: 'app-notification-history',
   templateUrl: './notification-history.component.html',
   styleUrls: ['./notification-history.component.scss'],

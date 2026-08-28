@@ -40,13 +40,16 @@
         <div class="form-row">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Recipients</mat-label>
-            <mat-chip-list #chipList>
-              <mat-chip *ngFor="let recipient of ruleForm.get('recipients')?.value" (removed)="removeRecipient(recipient)">
+            <mat-chip-grid #chipGrid>
+              <mat-chip-row *ngFor="let recipient of ruleForm.get('recipients')?.value" (removed)="removeRecipient(recipient)">
                 {{ recipient }}
-                <mat-icon matChipRemove>cancel</mat-icon>
-              </mat-chip>
-            </mat-chip-list>
-            <input matInput placeholder="Add recipient email and press Enter" (keydown.enter)="$event.preventDefault(); onRecipientsInput($event)">
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+            </mat-chip-grid>
+            <input matInput [matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="recipientSeparatorKeyCodes" (matChipInputTokenEnd)="addRecipient($event)" placeholder="Add recipient email">
+            <mat-hint>Type an email and press Enter to add a recipient.</mat-hint>
             <mat-error *ngIf="ruleForm.get('recipients')?.hasError('required')">At least one recipient is required</mat-error>
           </mat-form-field>
         </div>

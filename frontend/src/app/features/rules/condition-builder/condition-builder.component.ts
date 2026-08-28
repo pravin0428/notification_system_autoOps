@@ -3,6 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormArray, FormBuilder, FormGr
 import { ConditionOperator } from '../../../core/models/notification.models';
 
 @Component({
+  standalone: false,
   selector: 'app-condition-builder',
   templateUrl: './condition-builder.component.html',
   styleUrls: ['./condition-builder.component.scss'],
